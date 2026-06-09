@@ -121,12 +121,7 @@ export default function App() {
 
   if (!token) {
     return (
-      <main className="container">
-        <header className="header">
-          <h1>React Web + API com JWT</h1>
-          <p>Faça login para acessar as telas protegidas.</p>
-        </header>
-
+      <main>
         <LoginForm onLogin={handleLogin} loading={loading} />
       </main>
     );

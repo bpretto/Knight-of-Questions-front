@@ -1,49 +1,97 @@
 import { useState } from 'react';
+import './LoginForm.css';
+import loginImage from '../assets/login.jpg';
 
 export default function LoginForm({ onLogin, loading }) {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(true);
 
     async function handleSubmit(event) {
         event.preventDefault();
 
-        const normalizedEmail = email.trim();
+        const normalizedUsername = username.trim();
         const normalizedPassword = password.trim();
 
-        if (!normalizedEmail || !normalizedPassword) {
-            window.alert('Preencha e-mail e senha.');
+        if (!normalizedUsername || !normalizedPassword) {
+            window.alert('Preencha usuário e senha.');
             return;
         }
 
-        await onLogin({ email: normalizedEmail, password: normalizedPassword });
+        await onLogin({ username: normalizedUsername, password: normalizedPassword, rememberMe });
     }
 
     return (
-        <form className="card" onSubmit={handleSubmit}>
-            <h2>Login</h2>
-            <p>Entre com usuário cadastrado na API para acessar as demais telas.</p>
+        <div className="login-page">
+            <div className="login-hero" style={{ backgroundImage: `url(${loginImage})` }} />
+            <div className="login-panel">
+                <div className="login-panel__wrapper">
+                    <h1 className="login-panel__title">KNIGHT OF QUESTIONS</h1>
 
-            <label htmlFor="email">E-mail</label>
-            <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="aluno@jwt.com"
-            />
+                    <h2 className="login-panel__subtitle">Inicie sua sessão de estudos!</h2>
 
-            <label htmlFor="password">Senha</label>
-            <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="123456"
-            />
+                    <form onSubmit={handleSubmit} className="login-form">
+                        <label className="login-form__label" htmlFor="username">
+                            Usuário
+                        </label>
+                        <input
+                            id="username"
+                            className="login-form__input"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Digite o seu usuário"
+                            autoComplete="username"
+                        />
 
-            <button type="submit" disabled={loading}>
-                {loading ? 'Entrando...' : 'Entrar'}
-            </button>
-        </form>
+                        <label className="login-form__label" htmlFor="password">
+                            Senha
+                        </label>
+                        <input
+                            id="password"
+                            className="login-form__input"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Digite a sua senha"
+                            autoComplete="current-password"
+                        />
+
+                        <label className="login-form__remember">
+                            <input
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                            />
+                            Lembrar de mim
+                        </label>
+
+                        <button
+                            className="login-form__btn-primary"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? 'ENTRANDO...' : 'LOGIN'}
+                        </button>
+
+                        <button
+                            className="login-form__btn-secondary"
+                            type="button"
+                            onClick={() => {/* navegar para cadastro */ }}
+                        >
+                            Não tem conta? Cadastre-se
+                        </button>
+
+                        <button
+                            className="login-form__btn-link"
+                            type="button"
+                            onClick={() => {/* navegar para recuperar senha */ }}
+                        >
+                            Esqueceu sua senha?
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     );
 }
