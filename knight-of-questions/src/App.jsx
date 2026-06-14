@@ -5,6 +5,8 @@ import RegisterForm from './components/RegisterForm.jsx';
 import PostList from './components/PostList.jsx';
 import UserForm from './components/UserForm.jsx';
 import UserList from './components/UserList.jsx';
+import Home from './components/Home.jsx';
+import { useToast } from './components/Toast';
 import { createUser, getPostsByUserId, getUsers, login, register } from './services/api.js';
 
 const STORAGE_KEY = 'aulafront_auth';
@@ -32,11 +34,12 @@ export default function App() {
 
   const [token, setToken] = useState(storedAuth?.token || '');
   const [currentUser, setCurrentUser] = useState(storedAuth?.user || null);
-  const [screen, setScreen] = useState('users');
+  const [screen, setScreen] = useState('home');
   const [authScreen, setAuthScreen] = useState('login');
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   function persistAuth(nextToken, nextUser) {
     setToken(nextToken);
@@ -59,8 +62,9 @@ export default function App() {
     try {
       const data = await login(payload);
       persistAuth(data.accessToken, data.user);
+      showToast(`Bem-vindo, ${data.user.nome || data.user.username}!`, 'success');
     } catch (error) {
-      window.alert(error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -70,10 +74,10 @@ export default function App() {
     setLoading(true);
     try {
       await register(payload);
-      window.alert('Conta criada com sucesso! Faça login para continuar.');
+      showToast('Conta criada com sucesso! Faça login para continuar.', 'success');
       setAuthScreen('login');
     } catch (error) {
-      window.alert(error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -89,7 +93,7 @@ export default function App() {
       const data = await getUsers(token);
       setUsers(data);
     } catch (error) {
-      window.alert(error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -105,7 +109,7 @@ export default function App() {
       const data = await getPostsByUserId(currentUser.id, token);
       setPosts(data);
     } catch (error) {
-      window.alert(error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -115,9 +119,10 @@ export default function App() {
     setLoading(true);
     try {
       await createUser(payload, token);
+      showToast('Usuário cadastrado com sucesso!', 'success');
       await loadUsers();
     } catch (error) {
-      window.alert(error.message);
+      showToast(error.message, 'error');
       setLoading(false);
     }
   }
@@ -157,32 +162,31 @@ export default function App() {
 
   return (
     <main className="container">
-      <header className="header">
-        <h1>React Web + API de Alunos</h1>
-        <p>
-          Usuário autenticado: <strong>{currentUser?.name || currentUser?.email}</strong>
-        </p>
-      </header>
-
-      <section className="card nav-card">
-        <button type="button" onClick={() => setScreen('users')} disabled={screen === 'users'}>
-          Tela de usuários
-        </button>
-        <button type="button" onClick={() => setScreen('posts')} disabled={screen === 'posts'}>
-          Tela de posts
-        </button>
-        <button type="button" className="secondary" onClick={logout}>
-          Sair
-        </button>
-      </section>
-
-      {screen === 'users' ? (
+      {screen === 'home' ? (
+        <Home onNavigate={setScreen} />
+      ) : screen === 'users' ? (
         <>
+          <section className="card nav-card">
+            <button type="button" onClick={() => setScreen('home')}>Voltar</button>
+            <button type="button" onClick={() => setScreen('posts')} disabled={screen === 'posts'}>
+              Tela de posts
+            </button>
+            <button type="button" className="secondary" onClick={logout}>Sair</button>
+          </section>
+
           <UserForm onCreate={handleCreateUser} loading={loading} />
           <UserList users={users} loading={loading} onReload={loadUsers} />
         </>
+      ) : screen === 'posts' ? (
+        <>
+          <section className="card nav-card">
+            <button type="button" onClick={() => setScreen('home')}>Voltar</button>
+            <button type="button" className="secondary" onClick={logout}>Sair</button>
+          </section>
+          <PostList posts={posts} loading={loading} onReload={loadPosts} />
+        </>
       ) : (
-        <PostList posts={posts} loading={loading} onReload={loadPosts} />
+        <p>Tela "{screen}" em construção.</p>
       )}
     </main>
   );
