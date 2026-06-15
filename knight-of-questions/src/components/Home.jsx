@@ -71,10 +71,10 @@ export default function Home({ onNavigate }) {
                     </nav>
 
                     <div className="home-header__user">
-                        <span className="home-header__coins">
-                            🪙 {loading ? '...' : (user?.pontos ?? 0).toLocaleString('pt-BR')}
-                        </span>
                         <div className="home-header__profile">
+                            <span className="home-header__coins">
+                                🪙 {loading ? '...' : (user?.pontos ?? 0).toLocaleString('pt-BR')}
+                            </span>
                             <span className="home-header__avatar">👤</span>
                             <span className="home-header__name">
                                 {loading ? 'Carregando...' : (user?.nome ?? 'Visitante')}
@@ -96,7 +96,7 @@ export default function Home({ onNavigate }) {
                 <aside className="home-recent">
                     <h3 className="home-recent__title">Acessos Recentes</h3>
                     <div className="home-recent__grid">
-                        {Array.from({ length: 6 }).map((_, i) => (
+                        {Array.from({ length: 4 }).map((_, i) => (
                             <button key={i} className="home-recent__item" aria-label={`Acesso recente ${i + 1}`} />
                         ))}
                     </div>

@@ -161,7 +161,7 @@ export default function App() {
   }
 
   return (
-    <main className="container">
+    <main className={screen === 'home' ? undefined : 'container'}>
       {screen === 'home' ? (
         <Home onNavigate={setScreen} />
       ) : screen === 'users' ? (
