@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import LoginForm from './components/LoginForm.jsx';
-import RegisterForm from './components/RegisterForm.jsx';
+import LoginForm from './pages/Login/LoginForm.jsx';
+import RegisterForm from './pages/Register/RegisterForm.jsx';
+import Home from './pages/Home/Home.jsx';
+import { useToast } from './components/Alerta/Toast.jsx';
 import RelatorioMensal from './pages/RelatorioMensal/RelatorioMensal';
 import RelatorioSemanal from './pages/RelatorioSemanal/RelatorioSemanal';
-import { login, register, getPontos } from './services/api.js';
+import { createUser, getUsers, login, register, getPontos } from './services/api.js';
 
 const STORAGE_KEY = 'aulafront_auth';
 
@@ -25,17 +27,18 @@ export default function App() {
 
   const [token, setToken] = useState(storedAuth?.token || '');
   const [currentUser, setCurrentUser] = useState(storedAuth?.user || null);
+  const [screen, setScreen] = useState('home');
   const [authScreen, setAuthScreen] = useState('login');
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const { showToast } = useToast();
 
-  // Dados de pontos/nível/rank do usuário — alimentam o Header
   const [perfilPontos, setPerfilPontos] = useState({
     pontos: 0,
     nivel: 0,
     rank: '—',
   });
 
-  // Busca pontos reais sempre que o token muda (login ou refresh)
   useEffect(() => {
     if (!token) return;
 
@@ -48,12 +51,12 @@ export default function App() {
           rank: dados.rank ?? '—',
         });
       } catch {
-        // Silencioso: mantém valores padrão se falhar
       }
     }
 
     carregarPerfil();
   }, [token]);
+
 
   function persistAuth(nextToken, nextUser) {
     setToken(nextToken);
@@ -74,8 +77,9 @@ export default function App() {
     try {
       const data = await login(payload);
       persistAuth(data.accessToken, data.user);
+      showToast(`Bem-vindo(a), ${data.user.nome || data.user.username}!`, 'success');
     } catch (error) {
-      window.alert(error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -85,8 +89,24 @@ export default function App() {
     setLoading(true);
     try {
       await register(payload);
-      window.alert('Conta criada com sucesso! Faça login para continuar.');
+      showToast('Conta criada com sucesso! Faça login para continuar.', 'success');
       setAuthScreen('login');
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadUsers() {
+    if (!token) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await getUsers(token);
+      setUsers(data);
     } catch (error) {
       window.alert(error.message);
     } finally {
@@ -94,9 +114,37 @@ export default function App() {
     }
   }
 
+  async function handleCreateUser(payload) {
+    setLoading(true);
+    try {
+      await createUser(payload, token);
+      await loadUsers();
+    } catch (error) {
+      window.alert(error.message);
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    if (screen === 'users') {
+      loadUsers();
+      return;
+    }
+
+  }, [token, screen, currentUser?.id]);
+
   if (!token) {
     return (
-      <main>
+      <main style={{
+        backgroundColor: 'var(--bg-color)',
+        minHeight: '100vh',
+        padding: '20px',
+      }
+      }>
         {authScreen === 'login' ? (
           <LoginForm
             onLogin={handleLogin}
@@ -110,11 +158,10 @@ export default function App() {
             loading={loading}
           />
         )}
-      </main>
+      </main >
     );
   }
 
-  // Props compartilhadas com todas as telas autenticadas
   const sharedProps = {
     currentUser,
     logout,
@@ -123,17 +170,14 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={<RelatorioMensal {...sharedProps} />}
-        />
-        <Route
-          path="/semanal"
-          element={<RelatorioSemanal {...sharedProps} />}
-        />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <main className="container">
+        <Routes>
+          <Route path="/" element={<Home {...sharedProps} />} />
+          <Route path="/semanal" element={<RelatorioSemanal {...sharedProps} />} />
+          <Route path="/mensal" element={<RelatorioMensal {...sharedProps} />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </main>
     </BrowserRouter>
   );
 }
