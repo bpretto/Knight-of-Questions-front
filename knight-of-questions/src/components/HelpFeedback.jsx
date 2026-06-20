@@ -3,7 +3,7 @@ import './Help.css';
 import Header from './Header/Header.jsx';
 import { ArrowLeftIcon, MessageSquareIcon, MessageCircleIcon } from './HelpIcons.jsx';
 
-export default function HelpFeedback({ onBack, currentUser, logout, perfilPontos }) {
+export default function HelpFeedback({ onBack, currentUser, logout, perfilPontos, onOpenSupport }) {
   return (
     <div className="help-page-layout">
       <Header currentUser={currentUser} logout={logout} perfilPontos={perfilPontos} />
@@ -42,7 +42,7 @@ export default function HelpFeedback({ onBack, currentUser, logout, perfilPontos
 
         <section className="help-support">
           <p className="help-support-text">Não encontrou o que procurava?</p>
-          <button className="help-support-btn">
+          <button className="help-support-btn" onClick={onOpenSupport}>
             <MessageCircleIcon size={18} style={{ marginRight: '6px' }} /> Falar com o suporte
           </button>
         </section>

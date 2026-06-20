@@ -5,46 +5,68 @@ import HelpEstudos from './HelpEstudos.jsx';
 import HelpConta from './HelpConta.jsx';
 import HelpPrivacidade from './HelpPrivacidade.jsx';
 import HelpFeedback from './HelpFeedback.jsx';
-import { 
-  BookIcon, 
-  UserIcon, 
-  ShieldIcon, 
-  MessageSquareIcon, 
-  MessageCircleIcon 
+import SupportModal from './SupportModal.jsx';
+import {
+  BookIcon,
+  UserIcon,
+  ShieldIcon,
+  MessageSquareIcon,
+  MessageCircleIcon
 } from './HelpIcons.jsx';
 
 export default function Help({ currentUser, logout, perfilPontos }) {
   const [tela, setTela] = useState('principal');
+  const [showSupportModal, setShowSupportModal] = useState(false);
 
   const sharedProps = {
     currentUser,
     logout,
     perfilPontos,
     onBack: () => setTela('principal'),
+    onOpenSupport: () => setShowSupportModal(true),
   };
 
   if (tela === 'estudos') {
-    return <HelpEstudos {...sharedProps} />;
+    return (
+      <>
+        <HelpEstudos {...sharedProps} />
+        {showSupportModal && <SupportModal onClose={() => setShowSupportModal(false)} />}
+      </>
+    );
   }
 
   if (tela === 'conta') {
-    return <HelpConta {...sharedProps} />;
+    return (
+      <>
+        <HelpConta {...sharedProps} />
+        {showSupportModal && <SupportModal onClose={() => setShowSupportModal(false)} />}
+      </>
+    );
   }
 
   if (tela === 'privacidade') {
-    return <HelpPrivacidade {...sharedProps} />;
+    return (
+      <>
+        <HelpPrivacidade {...sharedProps} />
+        {showSupportModal && <SupportModal onClose={() => setShowSupportModal(false)} />}
+      </>
+    );
   }
 
   if (tela === 'feedback') {
-    return <HelpFeedback {...sharedProps} />;
+    return (
+      <>
+        <HelpFeedback {...sharedProps} />
+        {showSupportModal && <SupportModal onClose={() => setShowSupportModal(false)} />}
+      </>
+    );
   }
 
   return (
     <div className="help-page-layout">
       <Header currentUser={currentUser} logout={logout} perfilPontos={perfilPontos} />
-      
+
       <main className="help-content-container">
-        {/* Help Options Grid */}
         <section className="help-options">
           <button className="help-option-btn" onClick={() => setTela('estudos')}>
             <span className="help-option-icon">
@@ -52,21 +74,21 @@ export default function Help({ currentUser, logout, perfilPontos }) {
             </span>
             <span className="help-option-text">ESTUDOS</span>
           </button>
-          
+
           <button className="help-option-btn" onClick={() => setTela('conta')}>
             <span className="help-option-icon">
               <UserIcon size={36} />
             </span>
             <span className="help-option-text">CONTA</span>
           </button>
-          
+
           <button className="help-option-btn" onClick={() => setTela('privacidade')}>
             <span className="help-option-icon">
               <ShieldIcon size={36} />
             </span>
             <span className="help-option-text">PRIVACIDADE</span>
           </button>
-          
+
           <button className="help-option-btn" onClick={() => setTela('feedback')}>
             <span className="help-option-icon">
               <MessageSquareIcon size={36} />
@@ -75,7 +97,6 @@ export default function Help({ currentUser, logout, perfilPontos }) {
           </button>
         </section>
 
-        {/* FAQ Section */}
         <section className="help-faq">
           <h2 className="help-faq-title">PERGUNTAS FREQUENTES</h2>
 
@@ -108,14 +129,15 @@ export default function Help({ currentUser, logout, perfilPontos }) {
           </div>
         </section>
 
-        {/* Support Section */}
         <section className="help-support">
           <p className="help-support-text">Não encontrou o que procurava?</p>
-          <button className="help-support-btn">
+          <button className="help-support-btn" onClick={() => setShowSupportModal(true)}>
             <MessageCircleIcon size={18} style={{ marginRight: '6px' }} /> Falar com o suporte
           </button>
         </section>
       </main>
+
+      {showSupportModal && <SupportModal onClose={() => setShowSupportModal(false)} />}
     </div>
   );
 }

@@ -1,13 +1,12 @@
-import React from 'react';
 import './Help.css';
 import Header from './Header/Header.jsx';
 import { ArrowLeftIcon, UserIcon, MessageCircleIcon } from './HelpIcons.jsx';
 
-export default function HelpConta({ onBack, currentUser, logout, perfilPontos }) {
+export default function HelpConta({ onBack, currentUser, logout, perfilPontos, onOpenSupport }) {
   return (
     <div className="help-page-layout">
       <Header currentUser={currentUser} logout={logout} perfilPontos={perfilPontos} />
-      
+
       <main className="help-content-container">
         <div className="help-back-area">
           <button className="help-back-btn" onClick={onBack} title="Voltar">
@@ -42,7 +41,7 @@ export default function HelpConta({ onBack, currentUser, logout, perfilPontos })
 
         <section className="help-support">
           <p className="help-support-text">Não encontrou o que procurava?</p>
-          <button className="help-support-btn">
+          <button className="help-support-btn" onClick={onOpenSupport}>
             <MessageCircleIcon size={18} style={{ marginRight: '6px' }} /> Falar com o suporte
           </button>
         </section>
