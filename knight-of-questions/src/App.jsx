@@ -6,6 +6,7 @@ import Home from './pages/Home/Home.jsx';
 import { useToast } from './components/Alerta/Toast.jsx';
 import RelatorioMensal from './pages/RelatorioMensal/RelatorioMensal';
 import RelatorioSemanal from './pages/RelatorioSemanal/RelatorioSemanal';
+import MinhasProvas from './pages/Avaliacoes/MinhasProvas.jsx';
 import { createUser, getUsers, login, register, getPontos } from './services/api.js';
 
 const STORAGE_KEY = 'aulafront_auth';
@@ -175,6 +176,7 @@ export default function App() {
           <Route path="/" element={<Home {...sharedProps} />} />
           <Route path="/semanal" element={<RelatorioSemanal {...sharedProps} />} />
           <Route path="/mensal" element={<RelatorioMensal {...sharedProps} />} />
+          <Route path="/avaliacoes" element={<MinhasProvas {...sharedProps} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

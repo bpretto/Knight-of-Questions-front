@@ -80,7 +80,7 @@ export default function Home({ currentUser, logout, perfilPontos }) {
     }, []);
 
     const menuCards = [
-        { key: 'questoes', label: 'Questões', img: questoesImg, route: null },
+        { key: 'questoes', label: 'Questões', img: questoesImg, route: '/avaliacoes' },
         { key: 'jogos', label: 'Jogos', img: jogosImg, route: null },
         { key: 'decks', label: 'Decks', img: decksImg, route: null },
         { key: 'relatorios', label: 'Relatórios', img: relatoriosImg, route: '/mensal' },

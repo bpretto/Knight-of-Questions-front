@@ -71,3 +71,51 @@ export async function getTempoSessao(userId, token) {
 export async function getAcessosRecentes(userId, token) {
     return request(`/acessos-recentes/${userId}`, { token });
 }
+
+export async function getDisciplinas(token) {
+    return request('/disciplinas/getAll', { token });
+}
+
+export async function getConteudosByDisciplina(disciplinaId, token) {
+    return request(`/conteudos/disciplina/${disciplinaId}`, { token });
+}
+
+export async function getAvaliacoesByUser(userId, token) {
+    return request(`/avaliacoes/user/${userId}`, { token });
+}
+
+export async function getAvaliacoesVestibulares(token) {
+    return request('/avaliacoes/vestibular/all', { token });
+}
+
+export async function getAvaliacaoById(id, token) {
+    return request(`/avaliacoes/${id}`, { token });
+}
+
+export async function createAvaliacao(payload, token) {
+    return request('/avaliacoes/create', { method: 'POST', body: payload, token });
+}
+
+export async function createAvaliacaoPorDisciplina(payload, token) {
+    return request('/avaliacoes/por-disciplina', { method: 'POST', body: payload, token });
+}
+
+export async function deleteAvaliacao(id, token) {
+    return request(`/avaliacoes/delete/${id}`, { method: 'DELETE', token });
+}
+
+export async function createPergunta(payload, token) {
+    return request('/perguntas/create', { method: 'POST', body: payload, token });
+}
+
+export async function updatePergunta(id, payload, token) {
+    return request(`/perguntas/update/${id}`, { method: 'PATCH', body: payload, token });
+}
+
+export async function deletePergunta(id, token) {
+    return request(`/perguntas/delete/${id}`, { method: 'DELETE', token });
+}
+
+export async function addPontos(payload, token) {
+    return request('/pontos/add', { method: 'POST', body: payload, token });
+}
