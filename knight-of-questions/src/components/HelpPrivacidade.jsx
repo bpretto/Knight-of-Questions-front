@@ -1,4 +1,3 @@
-import React from 'react';
 import './Help.css';
 import Header from './Header/Header.jsx';
 import { ArrowLeftIcon, ShieldIcon, MessageCircleIcon } from './HelpIcons.jsx';
@@ -7,7 +6,7 @@ export default function HelpPrivacidade({ onBack, currentUser, logout, perfilPon
   return (
     <div className="help-page-layout">
       <Header currentUser={currentUser} logout={logout} perfilPontos={perfilPontos} />
-      
+
       <main className="help-content-container">
         <div className="help-back-area">
           <button className="help-back-btn" onClick={onBack} title="Voltar">

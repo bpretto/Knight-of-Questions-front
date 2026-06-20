@@ -7,7 +7,7 @@ export default function HelpEstudos({ onBack, currentUser, logout, perfilPontos,
   return (
     <div className="help-page-layout">
       <Header currentUser={currentUser} logout={logout} perfilPontos={perfilPontos} />
-      
+
       <main className="help-content-container">
         <div className="help-back-area">
           <button className="help-back-btn" onClick={onBack} title="Voltar">
