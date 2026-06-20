@@ -1,6 +1,7 @@
 import React from 'react';
 import './Help.css';
 import Header from './Header/Header.jsx';
+import { ArrowLeftIcon, UserIcon, MessageCircleIcon } from './HelpIcons.jsx';
 
 export default function HelpConta({ onBack, currentUser, logout, perfilPontos }) {
   return (
@@ -10,12 +11,14 @@ export default function HelpConta({ onBack, currentUser, logout, perfilPontos })
       <main className="help-content-container">
         <div className="help-back-area">
           <button className="help-back-btn" onClick={onBack} title="Voltar">
-            <span className="help-back-icon">◀</span>
+            <ArrowLeftIcon size={16} />
           </button>
         </div>
 
         <section className="help-section-title">
-          <div className="help-section-icon">👤</div>
+          <div className="help-section-icon">
+            <UserIcon size={48} />
+          </div>
           <h1 className="pixel-text">CONTA</h1>
           <p>Gerencie seu perfil, avatar e configurações pessoais.</p>
         </section>
@@ -40,7 +43,7 @@ export default function HelpConta({ onBack, currentUser, logout, perfilPontos })
         <section className="help-support">
           <p className="help-support-text">Não encontrou o que procurava?</p>
           <button className="help-support-btn">
-            <span>💬</span> Falar com o suporte
+            <MessageCircleIcon size={18} style={{ marginRight: '6px' }} /> Falar com o suporte
           </button>
         </section>
       </main>

@@ -5,6 +5,13 @@ import HelpEstudos from './HelpEstudos.jsx';
 import HelpConta from './HelpConta.jsx';
 import HelpPrivacidade from './HelpPrivacidade.jsx';
 import HelpFeedback from './HelpFeedback.jsx';
+import { 
+  BookIcon, 
+  UserIcon, 
+  ShieldIcon, 
+  MessageSquareIcon, 
+  MessageCircleIcon 
+} from './HelpIcons.jsx';
 
 export default function Help({ currentUser, logout, perfilPontos }) {
   const [tela, setTela] = useState('principal');
@@ -40,22 +47,30 @@ export default function Help({ currentUser, logout, perfilPontos }) {
         {/* Help Options Grid */}
         <section className="help-options">
           <button className="help-option-btn" onClick={() => setTela('estudos')}>
-            <span className="help-option-icon">📖</span>
+            <span className="help-option-icon">
+              <BookIcon size={36} />
+            </span>
             <span className="help-option-text">ESTUDOS</span>
           </button>
           
           <button className="help-option-btn" onClick={() => setTela('conta')}>
-            <span className="help-option-icon">👤</span>
+            <span className="help-option-icon">
+              <UserIcon size={36} />
+            </span>
             <span className="help-option-text">CONTA</span>
           </button>
           
           <button className="help-option-btn" onClick={() => setTela('privacidade')}>
-            <span className="help-option-icon">🛡️</span>
+            <span className="help-option-icon">
+              <ShieldIcon size={36} />
+            </span>
             <span className="help-option-text">PRIVACIDADE</span>
           </button>
           
           <button className="help-option-btn" onClick={() => setTela('feedback')}>
-            <span className="help-option-icon">💬</span>
+            <span className="help-option-icon">
+              <MessageSquareIcon size={36} />
+            </span>
             <span className="help-option-text">FEEDBACK</span>
           </button>
         </section>
@@ -97,7 +112,7 @@ export default function Help({ currentUser, logout, perfilPontos }) {
         <section className="help-support">
           <p className="help-support-text">Não encontrou o que procurava?</p>
           <button className="help-support-btn">
-            <span>💬</span> Falar com o suporte
+            <MessageCircleIcon size={18} style={{ marginRight: '6px' }} /> Falar com o suporte
           </button>
         </section>
       </main>
