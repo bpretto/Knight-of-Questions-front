@@ -1,74 +1,106 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './Help.css';
-
+import Header from './Header/Header.jsx';
 import HelpEstudos from './HelpEstudos.jsx';
 import HelpConta from './HelpConta.jsx';
 import HelpPrivacidade from './HelpPrivacidade.jsx';
 import HelpFeedback from './HelpFeedback.jsx';
 
-export default function Help() {
-    const [tela, setTela] = useState('principal');
+export default function Help({ currentUser, logout, perfilPontos }) {
+  const [tela, setTela] = useState('principal');
 
-    if (tela === 'estudos') {
-        return <HelpEstudos onBack={() => setTela('principal')} />;
-    }
+  const sharedProps = {
+    currentUser,
+    logout,
+    perfilPontos,
+    onBack: () => setTela('principal'),
+  };
 
-    if (tela === 'conta') {
-        return <HelpConta onBack={() => setTela('principal')} />;
-    }
+  if (tela === 'estudos') {
+    return <HelpEstudos {...sharedProps} />;
+  }
 
-    if (tela === 'privacidade') {
-        return <HelpPrivacidade onBack={() => setTela('principal')} />;
-    }
+  if (tela === 'conta') {
+    return <HelpConta {...sharedProps} />;
+  }
 
-    if (tela === 'feedback') {
-        return <HelpFeedback onBack={() => setTela('principal')} />;
-    }
+  if (tela === 'privacidade') {
+    return <HelpPrivacidade {...sharedProps} />;
+  }
 
-    return (
-        <main className="help-container">
-            <header className="help-topbar">
-                <div className="help-logo">KNIGHT OF<br />QUESTIONS</div>
+  if (tela === 'feedback') {
+    return <HelpFeedback {...sharedProps} />;
+  }
 
-                <nav className="help-nav">
-                    <span>Casa</span>
-                    <span>Patente</span>
-                    <strong>Ajuda</strong>
-                </nav>
+  return (
+    <div className="help-page-layout">
+      <Header currentUser={currentUser} logout={logout} perfilPontos={perfilPontos} />
+      
+      <main className="help-content-container">
+        {/* Help Options Grid */}
+        <section className="help-options">
+          <button className="help-option-btn" onClick={() => setTela('estudos')}>
+            <span className="help-option-icon">📖</span>
+            <span className="help-option-text">ESTUDOS</span>
+          </button>
+          
+          <button className="help-option-btn" onClick={() => setTela('conta')}>
+            <span className="help-option-icon">👤</span>
+            <span className="help-option-text">CONTA</span>
+          </button>
+          
+          <button className="help-option-btn" onClick={() => setTela('privacidade')}>
+            <span className="help-option-icon">🛡️</span>
+            <span className="help-option-text">PRIVACIDADE</span>
+          </button>
+          
+          <button className="help-option-btn" onClick={() => setTela('feedback')}>
+            <span className="help-option-icon">💬</span>
+            <span className="help-option-text">FEEDBACK</span>
+          </button>
+        </section>
 
-                <div className="help-user">
-                    <span>10.000</span>
-                    <small>Sr. Cavaleiro...</small>
-                </div>
-            </header>
+        {/* FAQ Section */}
+        <section className="help-faq">
+          <h2 className="help-faq-title">PERGUNTAS FREQUENTES</h2>
 
-            <section className="help-options">
-                <button onClick={() => setTela('estudos')}>📖<span>ESTUDOS</span></button>
-                <button onClick={() => setTela('conta')}>👤<span>CONTA</span></button>
-                <button onClick={() => setTela('privacidade')}>🛡️<span>PRIVACIDADE</span></button>
-                <button onClick={() => setTela('feedback')}>💬<span>FEEDBACK</span></button>
-            </section>
+          <div className="help-faq-item">
+            <h3 className="help-faq-question">COMO CRIAR UM NOVO DECK DE FLASHCARDS?</h3>
+            <p className="help-faq-answer">
+              Acesse a seção "Cards" no menu principal e clique no botão "+ Novo Deck". Dê um nome ao deck, escolha a matéria e comece a adicionar seus cards com frente e verso.
+            </p>
+          </div>
 
-            <section className="help-faq">
-                <h2>PERGUNTAS FREQUENTES</h2>
+          <div className="help-faq-item">
+            <h3 className="help-faq-question">POSSO FILTRAR QUESTÕES POR VESTIBULAR OU MATÉRIA?</h3>
+            <p className="help-faq-answer">
+              Sim! Na seção "Questões", use os filtros de prova (ENEM, ITA, FUVEST, etc.), matéria e nível de dificuldade para encontrar exatamente o que precisa.
+            </p>
+          </div>
 
-                <h3>COMO CRIAR UM NOVO DECK DE FLASHCARDS?</h3>
-                <p>Acesse a seção Cards no menu principal e clique em Novo Deck.</p>
+          <div className="help-faq-item">
+            <h3 className="help-faq-question">COMO FUNCIONA O RANKING?</h3>
+            <p className="help-faq-answer">
+              O ranking é atualizado com base na quantidade de moedas acumuladas por todos os jogadores. Mantenha uma rotina de estudos para subir de posição.
+            </p>
+          </div>
 
-                <h3>POSSO FILTRAR QUESTÕES POR VESTIBULAR OU MATÉRIA?</h3>
-                <p>Sim, use os filtros disponíveis na área de questões.</p>
+          <div className="help-faq-item">
+            <h3 className="help-faq-question">OS RELATÓRIOS MOSTRAM QUAIS INFORMAÇÕES?</h3>
+            <p className="help-faq-answer">
+              Os relatórios exibem horas de estudo por dia, taxa de acerto por matéria, sequência de dias estudados e evolução semanal/mensal do seu desempenho.
+            </p>
+          </div>
+        </section>
 
-                <h3>COMO FUNCIONA O RANKING?</h3>
-                <p>O ranking é atualizado conforme seu desempenho na plataforma.</p>
-
-                <h3>OS RELATÓRIOS MOSTRAM QUAIS INFORMAÇÕES?</h3>
-                <p>Mostram dados sobre seus estudos, acertos e evolução.</p>
-            </section>
-
-            <section className="help-support">
-                <p>Não encontrou o que procurava?</p>
-                <button>▣ Falar com o suporte</button>
-            </section>
-        </main>
-    );
+        {/* Support Section */}
+        <section className="help-support">
+          <p className="help-support-text">Não encontrou o que procurava?</p>
+          <button className="help-support-btn">
+            <span>💬</span> Falar com o suporte
+          </button>
+        </section>
+      </main>
+    </div>
+  );
 }

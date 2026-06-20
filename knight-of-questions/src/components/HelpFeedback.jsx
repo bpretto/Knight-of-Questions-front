@@ -1,52 +1,49 @@
-import './HelpFeedback.css';
+import React from 'react';
+import './Help.css';
+import Header from './Header/Header.jsx';
 
-export default function HelpFeedback({ onBack }) {
-    return (
-        <main className="help-feedback-container">
-            <header className="help-feedback-topbar">
-                <div className="help-feedback-logo">KNIGHT OF<br />QUESTIONS</div>
+export default function HelpFeedback({ onBack, currentUser, logout, perfilPontos }) {
+  return (
+    <div className="help-page-layout">
+      <Header currentUser={currentUser} logout={logout} perfilPontos={perfilPontos} />
+      
+      <main className="help-content-container">
+        <div className="help-back-area">
+          <button className="help-back-btn" onClick={onBack} title="Voltar">
+            <span className="help-back-icon">◀</span>
+          </button>
+        </div>
 
-                <nav className="help-feedback-nav">
-                    <span>Casa</span>
-                    <span>Patente</span>
-                    <strong>Ajuda</strong>
-                </nav>
+        <section className="help-section-title">
+          <div className="help-section-icon">💬</div>
+          <h1 className="pixel-text">FEEDBACK</h1>
+          <p>Envie sugestões, reporte bugs ou compartilhe ideias.</p>
+        </section>
 
-                <div className="help-feedback-user">
-                    <span>10.000</span>
-                    <small>Sr. Cavaleiro...</small>
-                </div>
-            </header>
+        <section className="help-cards-list">
+          <div className="help-card-item">
+            <h2>REPORTAR UM BUG</h2>
+            <p>Descreva o problema encontrado, a página onde aconteceu e o dispositivo usado.</p>
+          </div>
 
-            <button className="help-feedback-back" onClick={onBack}>◀</button>
+          <div className="help-card-item">
+            <h2>ENVIAR SUGESTÃO DE FUNCIONALIDADE</h2>
+            <p>Envie sua ideia para melhorar a plataforma e ajudar outros estudantes.</p>
+          </div>
 
-            <section className="help-feedback-title">
-                <div className="help-feedback-icon">💬</div>
-                <h1>FEEDBACK</h1>
-                <p>Envie sugestões, reporte bugs ou compartilhe ideias.</p>
-            </section>
+          <div className="help-card-item">
+            <h2>FEEDBACK GERAL</h2>
+            <p>Sua opinião é importante para melhorar a experiência dentro do Knight of Questions.</p>
+          </div>
+        </section>
 
-            <section className="help-feedback-cards">
-                <div className="help-feedback-card">
-                    <h2>REPORTAR UM BUG</h2>
-                    <p>Descreva o problema encontrado, a página onde aconteceu e o dispositivo usado.</p>
-                </div>
-
-                <div className="help-feedback-card">
-                    <h2>ENVIAR SUGESTÃO DE FUNCIONALIDADE</h2>
-                    <p>Envie sua ideia para melhorar a plataforma e ajudar outros estudantes.</p>
-                </div>
-
-                <div className="help-feedback-card">
-                    <h2>FEEDBACK GERAL</h2>
-                    <p>Sua opinião é importante para melhorar a experiência dentro do Knight of Questions.</p>
-                </div>
-            </section>
-
-            <section className="help-feedback-support">
-                <p>Não encontrou o que procurava?</p>
-                <button>▣ Falar com o suporte</button>
-            </section>
-        </main>
-    );
+        <section className="help-support">
+          <p className="help-support-text">Não encontrou o que procurava?</p>
+          <button className="help-support-btn">
+            <span>💬</span> Falar com o suporte
+          </button>
+        </section>
+      </main>
+    </div>
+  );
 }

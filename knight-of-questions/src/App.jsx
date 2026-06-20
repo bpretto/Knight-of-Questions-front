@@ -7,7 +7,7 @@ import { useToast } from './components/Alerta/Toast.jsx';
 import RelatorioMensal from './pages/RelatorioMensal/RelatorioMensal';
 import RelatorioSemanal from './pages/RelatorioSemanal/RelatorioSemanal';
 import Help from './components/Help.jsx';
-import { createUser, getUsers, login, register, getPontos } from './services/api.js';
+import { login, register, getPontos } from './services/api.js';
 
 const STORAGE_KEY = 'aulafront_auth';
 
@@ -28,10 +28,8 @@ export default function App() {
 
   const [token, setToken] = useState(storedAuth?.token || '');
   const [currentUser, setCurrentUser] = useState(storedAuth?.user || null);
-  const [screen, setScreen] = useState('home');
   const [authScreen, setAuthScreen] = useState('login');
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
   const { showToast } = useToast();
 
   const [perfilPontos, setPerfilPontos] = useState({
@@ -98,45 +96,6 @@ export default function App() {
       setLoading(false);
     }
   }
-
-  async function loadUsers() {
-    if (!token) {
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const data = await getUsers(token);
-      setUsers(data);
-    } catch (error) {
-      window.alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleCreateUser(payload) {
-    setLoading(true);
-    try {
-      await createUser(payload, token);
-      await loadUsers();
-    } catch (error) {
-      window.alert(error.message);
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!token) {
-      return;
-    }
-
-    if (screen === 'users') {
-      loadUsers();
-      return;
-    }
-
-  }, [token, screen, currentUser?.id]);
 
   if (!token) {
     return (
