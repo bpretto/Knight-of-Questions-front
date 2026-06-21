@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginForm from './pages/Login/LoginForm.jsx';
 import RegisterForm from './pages/Register/RegisterForm.jsx';
@@ -7,7 +7,15 @@ import Ranking from './pages/Ranking/Ranking.jsx';
 import { useToast } from './components/Alerta/Toast.jsx';
 import RelatorioMensal from './pages/RelatorioMensal/RelatorioMensal';
 import RelatorioSemanal from './pages/RelatorioSemanal/RelatorioSemanal';
-import { createUser, getUsers, login, register, getPontos } from './services/api.js';
+import Help from './components/Help.jsx';
+import {
+  login,
+  register,
+  getPontos,
+  startSessao,
+  endSessao,
+  updateOfensiva,
+} from './services/api.js';
 
 const STORAGE_KEY = 'aulafront_auth';
 
@@ -28,10 +36,9 @@ export default function App() {
 
   const [token, setToken] = useState(storedAuth?.token || '');
   const [currentUser, setCurrentUser] = useState(storedAuth?.user || null);
-  const [screen, setScreen] = useState('home');
+  const [sessaoId, setSessaoId] = useState(storedAuth?.sessaoId || null);
   const [authScreen, setAuthScreen] = useState('login');
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
   const { showToast } = useToast();
 
   const [perfilPontos, setPerfilPontos] = useState({
@@ -58,26 +65,66 @@ export default function App() {
     carregarPerfil();
   }, [token]);
 
-
-  function persistAuth(nextToken, nextUser) {
-    setToken(nextToken);
-    setCurrentUser(nextUser);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: nextToken, user: nextUser }));
-  }
-
-  function logout() {
+  function clearSession() {
     localStorage.removeItem(STORAGE_KEY);
     setToken('');
     setCurrentUser(null);
+    setSessaoId(null);
     setPerfilPontos({ pontos: 0, nivel: 0, rank: '—' });
     setAuthScreen('login');
+  }
+
+  useEffect(() => {
+    function handleSessionExpired() {
+      clearSession();
+      showToast('Sua sessão expirou. Faça login novamente.', 'warning');
+    }
+
+    window.addEventListener('auth:expired', handleSessionExpired);
+    return () => window.removeEventListener('auth:expired', handleSessionExpired);
+  }, []);
+
+  function persistAuth(nextToken, nextUser, nextSessaoId) {
+    setToken(nextToken);
+    setCurrentUser(nextUser);
+    setSessaoId(nextSessaoId);
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ token: nextToken, user: nextUser, sessaoId: nextSessaoId })
+    );
+  }
+
+  async function logout() {
+    if (sessaoId && token) {
+      try {
+        await endSessao(sessaoId, token);
+      } catch (error) {
+        console.error('Erro ao finalizar sessão:', error);
+      }
+    }
+    clearSession();
   }
 
   async function handleLogin(payload) {
     setLoading(true);
     try {
       const data = await login(payload);
-      persistAuth(data.accessToken, data.user);
+
+      let novaSessaoId = null;
+      try {
+        const sessao = await startSessao(data.user.id, data.accessToken);
+        novaSessaoId = sessao.id;
+      } catch (error) {
+        console.error('Erro ao iniciar sessão:', error);
+      }
+
+      try {
+        await updateOfensiva(undefined, data.accessToken);
+      } catch (error) {
+        console.error('Erro ao atualizar ofensiva:', error);
+      }
+
+      persistAuth(data.accessToken, data.user, novaSessaoId);
       showToast(`Bem-vindo(a), ${data.user.nome || data.user.username}!`, 'success');
     } catch (error) {
       showToast(error.message, 'error');
@@ -89,7 +136,7 @@ export default function App() {
   async function handleRegister(payload) {
     setLoading(true);
     try {
-      await register(payload);
+      await register({ ...payload, role: 'estudante' });
       showToast('Conta criada com sucesso! Faça login para continuar.', 'success');
       setAuthScreen('login');
     } catch (error) {
@@ -98,45 +145,6 @@ export default function App() {
       setLoading(false);
     }
   }
-
-  async function loadUsers() {
-    if (!token) {
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const data = await getUsers(token);
-      setUsers(data);
-    } catch (error) {
-      window.alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleCreateUser(payload) {
-    setLoading(true);
-    try {
-      await createUser(payload, token);
-      await loadUsers();
-    } catch (error) {
-      window.alert(error.message);
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!token) {
-      return;
-    }
-
-    if (screen === 'users') {
-      loadUsers();
-      return;
-    }
-
-  }, [token, screen, currentUser?.id]);
 
   if (!token) {
     return (
@@ -178,6 +186,7 @@ export default function App() {
           <Route path="/rank" element={<Ranking {...sharedProps} />} />
           <Route path="/semanal" element={<RelatorioSemanal {...sharedProps} />} />
           <Route path="/mensal" element={<RelatorioMensal {...sharedProps} />} />
+          <Route path="/help" element={<Help {...sharedProps} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
