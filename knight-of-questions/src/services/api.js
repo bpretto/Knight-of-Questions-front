@@ -141,3 +141,11 @@ export async function startSessao(userId, token) {
 export async function endSessao(sessaoId, token) {
     return request(`/sessao/end/${sessaoId}`, { method: 'PUT', token });
 }
+
+export async function updateOfensiva(acao, token) {
+    return request('/ofensiva/update', {
+        method: 'POST',
+        body: acao ? { acao } : {},
+        token,
+    });
+}

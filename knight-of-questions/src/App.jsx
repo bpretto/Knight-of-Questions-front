@@ -8,7 +8,14 @@ import RelatorioMensal from './pages/RelatorioMensal/RelatorioMensal';
 import RelatorioSemanal from './pages/RelatorioSemanal/RelatorioSemanal';
 import MinhasProvas from './pages/Avaliacoes/MinhasProvas.jsx';
 import Help from './pages/Help/Help.jsx';
-import { login, register, getPontos, startSessao, endSessao } from './services/api.js';
+import {
+  login,
+  register,
+  getPontos,
+  startSessao,
+  endSessao,
+  updateOfensiva,
+} from './services/api.js';
 
 const STORAGE_KEY = 'aulafront_auth';
 
@@ -111,6 +118,12 @@ export default function App() {
         console.error('Erro ao iniciar sessão:', error);
       }
 
+      try {
+        await updateOfensiva(undefined, data.accessToken);
+      } catch (error) {
+        console.error('Erro ao atualizar ofensiva:', error);
+      }
+
       persistAuth(data.accessToken, data.user, novaSessaoId);
       showToast(`Bem-vindo(a), ${data.user.nome || data.user.username}!`, 'success');
     } catch (error) {
@@ -123,7 +136,7 @@ export default function App() {
   async function handleRegister(payload) {
     setLoading(true);
     try {
-      await register(payload);
+      await register({ ...payload, role: 'estudante' });
       showToast('Conta criada com sucesso! Faça login para continuar.', 'success');
       setAuthScreen('login');
     } catch (error) {
