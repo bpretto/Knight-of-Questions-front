@@ -53,10 +53,20 @@ export default function Ranking({ currentUser, logout, perfilPontos }) {
 
     const podiumUsers = useMemo(() => ranking.slice(0, 3), [ranking]);
     const currentUserRanking = useMemo(() => {
-        return ranking.find((usuario) => usuario?.isCurrentUser)
-            || ranking.find((usuario) => usuario?.userId === currentUser?.id)
-            || DEMO_CURRENT_USER;
-    }, [ranking, currentUser?.id]);
+        const rankedUser = ranking.find((usuario) => usuario?.isCurrentUser)
+            || ranking.find((usuario) => usuario?.userId === currentUser?.id);
+
+        if (rankedUser) {
+            return rankedUser;
+        }
+
+        return {
+            ...DEMO_CURRENT_USER,
+            nome: currentUser?.nome || currentUser?.name || DEMO_CURRENT_USER.nome,
+            userId: currentUser?.id,
+            isCurrentUser: true,
+        };
+    }, [ranking, currentUser?.id, currentUser?.nome, currentUser?.name]);
 
     const topList = useMemo(() => ranking.slice(0, 4), [ranking]);
 
