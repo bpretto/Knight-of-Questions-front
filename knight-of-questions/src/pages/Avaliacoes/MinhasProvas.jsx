@@ -104,7 +104,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
             }
             setAvaliacoes(data);
         } catch (e) {
-            setError(e.message || 'Nao foi possivel carregar as avaliacoes.');
+            setError(e.message || 'Não foi possivel carregar as avaliacoes.');
         } finally {
             setLoading(false);
         }
@@ -131,7 +131,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                     setSelectedDiscipline(String(data[0].id));
                 }
             } catch (err) {
-                console.warn('Nao foi possivel carregar disciplinas:', err.message);
+                console.warn('Não foi possivel carregar disciplinas:', err.message);
             }
         }
 
@@ -151,7 +151,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
             } catch (err) {
                 setConteudos([]);
                 setSelectedContent('');
-                console.warn('Nao foi possivel carregar conteudos:', err.message);
+                console.warn('Não foi possivel carregar conteudos:', err.message);
             }
         }
 
@@ -170,7 +170,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                 });
             } catch (err) {
                 setQuestionConteudos([]);
-                console.warn('Nao foi possivel carregar conteudos da questao:', err.message);
+                console.warn('Não foi possivel carregar conteudos da questao:', err.message);
             }
         }
 
@@ -334,7 +334,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
 
     const startStudy = () => {
         if (!activeExam?.perguntas?.length) {
-            alert('Esta prova nao contem questoes cadastradas.');
+            alert('Esta prova não contem questões cadastradas.');
             return;
         }
         setAnswers({});
@@ -358,7 +358,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
             try {
                 await addPontos({ acao: 'questoes', quantidade: correct }, token);
             } catch (err) {
-                console.warn('Nao foi possivel registrar pontos:', err.message);
+                console.warn('Não foi possivel registrar pontos:', err.message);
             }
         }
     };
@@ -572,7 +572,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                             </span>
                             <span className="prova-card__info">
                                 <span className="pixel-text card-title">{item.titulo.toUpperCase()}</span>
-                                <span className="pixel-text card-questions">{item.perguntas?.length || 0} QUESTOES</span>
+                                <span className="pixel-text card-questions">{item.perguntas?.length || 0} QUESTÕES</span>
                             </span>
                         </button>
                     ))}
@@ -731,12 +731,12 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label className="pixel-text label-sm">QUANTIDADE DE QUESTOES</label>
+                                <label className="pixel-text label-sm">QUANTIDADE DE QUESTÕES</label>
                                 <select className="kq-select" value={numQuestions} onChange={(e) => setNumQuestions(parseInt(e.target.value, 10))}>
-                                    <option value="5">5 questoes</option>
-                                    <option value="10">10 questoes</option>
-                                    <option value="15">15 questoes</option>
-                                    <option value="20">20 questoes</option>
+                                    <option value="5">5 questões</option>
+                                    <option value="10">10 questões</option>
+                                    <option value="15">15 questões</option>
+                                    <option value="20">20 questões</option>
                                 </select>
                             </div>
                             <div className="form-actions">
