@@ -560,7 +560,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                     <img src={emptyBau} alt="Bau vazio" className="empty-chest" />
 
                     <h3 className="pixel-text">Baú de Provas Vazio</h3>
-                    <p>Que tal criar sua primeira avaliacao e comecar a jornada?</p>
+                    <p>Que tal criar sua primeira avaliação e começar a jornada?</p>
                     <button className="provas-btn action-btn-green" onClick={() => setShowCreateModal(true)}>Estudar por Disciplina</button>
                 </div>
             ) : (
