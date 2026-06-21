@@ -175,6 +175,7 @@ export default function App() {
     currentUser,
     logout,
     perfilPontos,
+    token,
   };
 
   return (
