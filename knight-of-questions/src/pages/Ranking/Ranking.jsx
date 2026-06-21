@@ -62,7 +62,6 @@ export default function Ranking({ currentUser, logout, perfilPontos }) {
 
     return (
         <div className="ranking-page">
-            <div className="ranking-page__label pixel-text">Ranking</div>
 
             <Header
                 currentUser={currentUser}
