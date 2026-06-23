@@ -59,15 +59,6 @@ export default function LoginForm({ onLogin, onNavigateToRegister, loading }) {
                             autoComplete="current-password"
                         />
 
-                        <label className="login-form__remember">
-                            <input
-                                type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                            />
-                            Lembrar de mim
-                        </label>
-
                         <button
                             className="login-form__btn-primary"
                             type="submit"
