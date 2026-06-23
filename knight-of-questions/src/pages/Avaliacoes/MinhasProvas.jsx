@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import {
     addPontos,
+    createAvaliacao,
     createAvaliacaoPorDisciplina,
     createPergunta,
+    deleteAvaliacao,
     deletePergunta,
     getAvaliacaoById,
     getAvaliacoesByUser,
@@ -40,6 +42,14 @@ function getAuth() {
     } catch {
         return {};
     }
+}
+
+function getDynamicFontSize(text) {
+    if (!text) return '24px';
+    const len = text.length;
+    if (len <= 10) return '28px';
+    const size = Math.max(14, 28 - (len - 10) * 0.4);
+    return `${Math.round(size)}px`;
 }
 
 function buildQuestionForm(question, examId) {
@@ -85,6 +95,7 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
     const [answers, setAnswers] = useState({});
     const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
     const [result, setResult] = useState(null);
+    const [showDeleteExamConfirmModal, setShowDeleteExamConfirmModal] = useState(false);
 
     const { token, user } = getAuth();
     const userId = user?.id || currentUser?.id;
@@ -208,11 +219,26 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
             alert('Digite o nome da prova.');
             return;
         }
-        alert(`Prova "${newExamName}" salva com sucesso contendo ${linkedQuestions.length} questões!`);
-        setShowManualExamModal(false);
-        setNewExamName('');
-        setLinkedQuestions([]);
-        carregarAvaliacoes();
+        if (linkedQuestions.length === 0) {
+            alert('Adicione pelo menos uma questão na prova.');
+            return;
+        }
+
+        try {
+            const payload = {
+                titulo: newExamName.trim(),
+                is_vestibular: false,
+                id_user: userId,
+                perguntas: linkedQuestions
+            };
+            await createAvaliacao(payload, token);
+            setShowManualExamModal(false);
+            setNewExamName('');
+            setLinkedQuestions([]);
+            await carregarAvaliacoes();
+        } catch (err) {
+            alert(err.message || 'Erro ao criar prova manual');
+        }
     };
 
     const handleOpenExam = async (examId) => {
@@ -247,7 +273,11 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
 
     const openQuestionModal = (type, question = null) => {
         setQuestionModal({ type, question });
-        setQuestionForm(buildQuestionForm(question, activeExam?.id));
+        const form = buildQuestionForm(question, activeExam?.id);
+        if (!question && disciplinas.length > 0) {
+            form.disciplina_id = String(disciplinas[0].id);
+        }
+        setQuestionForm(form);
     };
 
     const closeQuestionModal = () => {
@@ -303,9 +333,16 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
             alternativas: alternativasValidas.map((alt) => ({
                 ...alt,
                 texto: alt.texto.trim(),
+                is_correta: !!alt.is_correta,
                 descricao: alt.descricao?.trim() || null
             }))
         };
+
+        if (showManualExamModal) {
+            setLinkedQuestions((prev) => [...prev, payload]);
+            closeQuestionModal();
+            return;
+        }
 
         try {
             if (questionModal?.type === 'edit') {
@@ -329,6 +366,23 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
             closeQuestionModal();
         } catch (err) {
             alert(err.message || 'Erro ao excluir questao');
+        }
+    };
+
+    const handleDeleteExam = () => {
+        setShowDeleteExamConfirmModal(true);
+    };
+
+    const confirmDeleteExam = async () => {
+        if (!activeExam) return;
+        try {
+            await deleteAvaliacao(activeExam.id, token);
+            setShowDeleteExamConfirmModal(false);
+            setActiveExam(null);
+            setViewMode('grid');
+            await carregarAvaliacoes();
+        } catch (err) {
+            alert(err.message || 'Erro ao excluir prova');
         }
     };
 
@@ -388,14 +442,14 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                                     required
                                 />
                             </div>
-                            {/* <button 
+                            <button 
                                 type="button" 
                                 className="provas-btn action-btn-green" 
                                 onClick={() => openQuestionModal('create')}
-                                style={{ background: '#093129', color: '#fff', padding: '10px 15px', display: 'flex', alignItems: 'center', gap: '5px', height: '42px', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '42px', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
                             >
                                 Cadastrar nova questão +
-                            </button> */}
+                            </button>
                         </div>
 
                         <div style={{ textAlign: 'left', marginBottom: '20px' }}>
@@ -405,8 +459,16 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                             ) : (
                                 <ul style={{ marginTop: '10px', paddingLeft: '20px', color: '#333' }}>
                                     {linkedQuestions.map((q, idx) => (
-                                        <li key={idx} style={{ marginBottom: '5px' }}>
-                                            <strong>Q{idx + 1}:</strong> {q.enunciado.substring(0, 40)}...
+                                        <li key={idx} style={{ marginBottom: '5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span><strong>Q{idx + 1}:</strong> {q.enunciado.substring(0, 40)}...</span>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setLinkedQuestions((prev) => prev.filter((_, i) => i !== idx))}
+                                                style={{ background: 'none', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontWeight: 'bold', fontSize: '18px', padding: '0 5px' }}
+                                                title="Remover questão"
+                                            >
+                                                &times;
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>
@@ -588,9 +650,14 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
                 <div className="exam-detail-actions">
                     <button className="provas-btn" onClick={startStudy}>Estudar Agora</button>
                     {canManageQuestions && (
-                        <button className="provas-btn action-btn-green" onClick={() => openQuestionModal('create')}>
-                            Adicionar Questao
-                        </button>
+                        <>
+                            <button className="provas-btn action-btn-green" onClick={() => openQuestionModal('create')}>
+                                Adicionar Questao
+                            </button>
+                            <button className="provas-btn kq-btn-danger" onClick={handleDeleteExam}>
+                                Excluir Prova
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
@@ -685,8 +752,11 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
 
                     {viewMode === 'grid' && (
                         <div className="provas-buttons">
-                            <button className={`provas-btn ${filter === 'minhas' ? 'active' : ''}`} onClick={() => setShowManualExamModal(true)}>Criar Nova Prova</button>
+                            <button className={`provas-btn ${filter === 'minhas' ? 'active' : ''}`} onClick={() => setFilter('minhas')}>Minhas Provas</button>
                             <button className={`provas-btn ${filter === 'vestibulares' ? 'active' : ''}`} onClick={() => setFilter('vestibulares')}>Vestibulares</button>
+                            {filter === 'minhas' && (
+                                <button className="provas-btn" onClick={() => setShowManualExamModal(true)}>Criar Nova Prova</button>
+                            )}
                             <button className="provas-btn action-btn-green" onClick={() => setShowCreateModal(true)}>Estudar por Disciplina</button>
                         </div>
                     )}
@@ -750,6 +820,31 @@ export default function MinhasProvas({ currentUser, logout, perfilPontos }) {
 
             {renderCreateExamModal()}
             {renderQuestionModal()}
+
+            {showDeleteExamConfirmModal && (
+                <div className="modal-overlay">
+                    <div className="confirm-modal-content">
+                        <h2 className="confirm-modal-title">
+                            Tem certeza que deseja excluir a prova:
+                        </h2>
+                        <div className="modal-bracket-box">
+                            <span className="corner-bl"></span>
+                            <span className="corner-br"></span>
+                            <span className="confirm-modal-target pixel-text" style={{ fontSize: getDynamicFontSize(activeExam?.titulo) }}>
+                                {activeExam?.titulo}
+                            </span>
+                        </div>
+                        <div className="confirm-modal-footer">
+                            <button className="btn-confirm-yes" onClick={confirmDeleteExam}>
+                                Sim
+                            </button>
+                            <button className="btn-confirm-no" onClick={() => setShowDeleteExamConfirmModal(false)}>
+                                Não
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {showSubmitConfirm && (
                 <div className="kq-modal-overlay">

@@ -33,6 +33,14 @@ function getAuth() {
   }
 }
 
+function getDynamicFontSize(text) {
+  if (!text) return '24px';
+  const len = text.length;
+  if (len <= 10) return '28px';
+  const size = Math.max(14, 28 - (len - 10) * 0.4);
+  return `${Math.round(size)}px`;
+}
+
 export default function Decks({ currentUser, logout, perfilPontos }) {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -1698,20 +1706,20 @@ export default function Decks({ currentUser, logout, perfilPontos }) {
       {showConfirmCloseReviewModal && (
         <div className="modal-overlay" style={{ zIndex: 1100 }}>
           <div className="confirm-modal-content">
-            <h2 className="confirm-modal-title" style={{ fontSize: '16px', color: '#0b3b2d', marginBottom: '20px' }}>
-              TEM CERTEZA QUE DESEJA ENCERRAR A REVISÃO DO CARD:
+            <h2 className="confirm-modal-title" style={{ fontSize: '22px', color: '#0b3b2d', marginBottom: '20px' }}>
+              TEM CERTEZA QUE DESEJA ENCERRAR A REVISÃO DO DECK:
             </h2>
             <div className="modal-bracket-box">
               <span className="corner-bl"></span>
               <span className="corner-br"></span>
-              <span className="confirm-modal-target pixel-text">
+              <span className="confirm-modal-target pixel-text" style={{ fontSize: getDynamicFontSize(studyTitle) }}>
                 {studyTitle}
               </span>
             </div>
             <div className="confirm-modal-footer" style={{ marginTop: '24px' }}>
               <button 
                 type="button" 
-                className="confirm-modal-btn confirm-modal-btn--yes"
+                className="btn-confirm-yes"
                 onClick={async () => {
                   setShowConfirmCloseReviewModal(false);
                   const wasRated = ratedCardIndices.has(studyCurrentIndex);
@@ -1728,7 +1736,7 @@ export default function Decks({ currentUser, logout, perfilPontos }) {
               </button>
               <button 
                 type="button" 
-                className="confirm-modal-btn confirm-modal-btn--no"
+                className="btn-confirm-no"
                 onClick={() => setShowConfirmCloseReviewModal(false)}
               >
                 Não
@@ -1748,7 +1756,7 @@ export default function Decks({ currentUser, logout, perfilPontos }) {
             <div className="modal-bracket-box">
               <span className="corner-bl"></span>
               <span className="corner-br"></span>
-              <span className="confirm-modal-target pixel-text">
+              <span className="confirm-modal-target pixel-text" style={{ fontSize: getDynamicFontSize(deckToDelete?.nome) }}>
                 {deckToDelete?.nome}
               </span>
             </div>
@@ -1774,7 +1782,7 @@ export default function Decks({ currentUser, logout, perfilPontos }) {
             <div className="modal-bracket-box">
               <span className="corner-bl"></span>
               <span className="corner-br"></span>
-              <span className="confirm-modal-target pixel-text">
+              <span className="confirm-modal-target pixel-text" style={{ fontSize: getDynamicFontSize(cardToDelete?.frente) }}>
                 {cardToDelete?.frente}
               </span>
             </div>

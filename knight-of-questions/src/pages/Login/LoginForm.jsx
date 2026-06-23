@@ -84,13 +84,13 @@ export default function LoginForm({ onLogin, onNavigateToRegister, loading }) {
                             Não tem conta? Cadastre-se
                         </button>
 
-                        <button
+                        {/* <button
                             className="login-form__btn-link"
                             type="button"
-                            onClick={() => {/* navegar para recuperar senha */ }}
+                            onClick={() => {}}
                         >
                             Esqueceu sua senha?
-                        </button>
+                        </button> */}
                     </form>
                 </div>
             </div>

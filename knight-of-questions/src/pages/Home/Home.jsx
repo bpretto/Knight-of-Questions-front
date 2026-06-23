@@ -6,7 +6,7 @@ import bannerImg from '../../assets/home-banner-completo.png';
 import knightImg from '../../assets/home-knight.png';
 import questoesImg from '../../assets/card-questoes.png';
 import decksImg from '../../assets/card-decks.png';
-import jogosImg from '../../assets/card-jogos.png';
+// import jogosImg from '../../assets/card-jogos.png';
 import relatoriosImg from '../../assets/card-relatorios.png';
 import Header from '../../components/Header/Header';
 import { getDadosMensal } from '../../services/relatorioService';
@@ -83,7 +83,7 @@ export default function Home({ currentUser, logout, perfilPontos }) {
 
     const menuCards = [
         { key: 'questoes', label: 'Questões', img: questoesImg, route: '/avaliacoes' },
-        { key: 'jogos', label: 'Jogos', img: jogosImg, route: null },
+        // { key: 'jogos', label: 'Jogos', img: jogosImg, route: null },
         { key: 'decks', label: 'Decks', img: decksImg, route: '/decks' },
         { key: 'relatorios', label: 'Relatórios', img: relatoriosImg, route: '/mensal' },
     ];
@@ -160,7 +160,7 @@ export default function Home({ currentUser, logout, perfilPontos }) {
                     {menuCards.map((card) => (
                         <button
                             key={card.key}
-                            className="home-menu__card"
+                            className={`home-menu__card ${card.key === 'relatorios' ? 'home-menu__card--relatorios' : ''}`}
                             onClick={() => card.route && navigate(card.route)}
                         >
                             <img src={card.img} alt={card.label} className="home-menu__img" />

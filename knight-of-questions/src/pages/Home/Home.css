@@ -270,6 +270,12 @@
     display: block;
 }
 
+.home-menu__card--relatorios {
+    grid-column: span 2;
+    justify-self: center;
+    width: calc(50% - 0.625rem);
+}
+
 @media (max-width: 768px) {
     .home-content {
         flex-direction: column;
@@ -290,6 +296,11 @@
 
     .home-header__name {
         display: none;
+    }
+
+    .home-menu__card--relatorios {
+        grid-column: auto;
+        width: 100%;
     }
 }
 
